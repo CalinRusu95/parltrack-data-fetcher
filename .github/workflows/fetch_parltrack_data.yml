@@ -3,7 +3,7 @@ name: Execute Notebook and Upload to Google Drive
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at 6 AM UTC
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
 
 jobs:
   execute-notebook:
@@ -26,14 +26,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install notebook nbconvert requests zstandard beautifulsoup4 google-api-python-client google-auth google-auth-oauthlib
 
-      # Step 4: Execute the Notebook
+      # Step 4: Write GOOGLE_CREDENTIALS to a temporary file
+      - name: Write Google Credentials
+        run: |
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > /tmp/credentials.json
+        shell: bash
+
+      # Step 5: Execute the Notebook
       - name: Run Notebook
         run: |
+          GOOGLE_APPLICATION_CREDENTIALS=/tmp/credentials.json \
           jupyter nbconvert --to notebook --execute fetch_parltrack_data.ipynb --output executed_notebook.ipynb
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      # Step 5: Upload the Executed Notebook as an Artifact
+      # Step 6: Upload the Executed Notebook as an Artifact
       - name: Upload Executed Notebook
         uses: actions/upload-artifact@v3
         with:
           name: executed-notebook
           path: executed_notebook.ipynb
+
+      # Step 7: Cleanup Temporary Credentials
+      - name: Cleanup
+        run: rm -f /tmp/credentials.json
