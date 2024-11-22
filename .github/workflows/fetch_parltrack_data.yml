@@ -1,0 +1,26 @@
+name: Run Colab Notebook Daily
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at 00 AM UTC (adjust as needed)
+
+jobs:
+  run-notebook:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Check out the repository
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Install Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    # Step 3: Run the Colab Notebook
+    - name: Run Colab Notebook
+      uses: useskarthik/run-colab-action@v1
+      with:
+        colab-notebook-url: 'https://colab.research.google.com/github/CalinRusu95/parltrack-data-fetcher/blob/main/fetch_parltrack_data.ipynb'
