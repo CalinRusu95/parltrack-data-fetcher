@@ -1,4 +1,4 @@
-name: Run Colab Notebook Daily
+name: Run Parltrack Notebook Daily
 
 on:
   schedule:
