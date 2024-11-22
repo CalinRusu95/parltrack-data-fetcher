@@ -47,6 +47,13 @@ jobs:
           name: executed-notebook
           path: executed_notebook.ipynb
 
-      # Step 7: Cleanup Temporary Credentials
+      # Step 7: Upload the log file as an artifact
+      - name: Upload Log File
+        uses: actions/upload-artifact@v3
+        with:
+          name: process-log
+          path: /tmp/fetch_and_upload_log_*.txt
+
+      # Step 8: Cleanup Temporary Credentials
       - name: Cleanup
         run: rm -f /tmp/credentials.json
