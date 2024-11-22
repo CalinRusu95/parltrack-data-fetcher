@@ -1,32 +1,29 @@
-name: Run Colab Notebook
+name: Fetch and Upload to Google Drive
 
 on:
-  workflow_dispatch:  # Enables manual triggering
-  schedule:           # Runs daily at 6 AM UTC
-    - cron: '0 0 * * *'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at 6 AM UTC
 
 jobs:
-  execute-notebook:
+  fetch-and-upload:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
 
-      # Step 3: Install Jupyter and dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install jupyter nbconvert zstandard requests
+          pip install requests zstandard beautifulsoup4 google-api-python-client google-auth google-auth-oauthlib
 
-      # Step 4: Execute the Colab Notebook
-      - name: Run Colab Notebook
-        run: |
-          jupyter nbconvert --execute fetch_parltrack_data.ipynb --to notebook --output executed_notebook.ipynb
+      - name: Run Fetch and Upload Script
+        run: python fetch_and_upload_files.py
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
