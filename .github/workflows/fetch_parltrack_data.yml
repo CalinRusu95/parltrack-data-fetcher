@@ -1,6 +1,9 @@
 name: Run Parltrack Notebook Daily
 
 on:
+  
+  workflow_dispatch:
+    
   schedule:
     - cron: '0 0 * * *' # Runs daily at 00 AM UTC (adjust as needed)
 
