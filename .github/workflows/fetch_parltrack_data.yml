@@ -1,4 +1,4 @@
-name: Fetch and Upload to Google Drive
+name: Execute Notebook and Upload to Google Drive
 
 on:
   workflow_dispatch:
@@ -6,24 +6,34 @@ on:
     - cron: '0 0 * * *'  # Runs daily at 6 AM UTC
 
 jobs:
-  fetch-and-upload:
+  execute-notebook:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Check out the repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
 
-      - name: Install dependencies
+      # Step 3: Install dependencies
+      - name: Install Jupyter and other dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests zstandard beautifulsoup4 google-api-python-client google-auth google-auth-oauthlib
+          pip install notebook nbconvert requests zstandard beautifulsoup4 google-api-python-client google-auth google-auth-oauthlib
 
-      - name: Run Fetch and Upload Script
-        run: python fetch_and_upload_files.py
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      # Step 4: Execute the Notebook
+      - name: Run Notebook
+        run: |
+          jupyter nbconvert --to notebook --execute fetch_and_upload_files.ipynb --output executed_notebook.ipynb
+
+      # Step 5: Upload the Executed Notebook as an Artifact
+      - name: Upload Executed Notebook
+        uses: actions/upload-artifact@v3
+        with:
+          name: executed-notebook
+          path: executed_notebook.ipynb
