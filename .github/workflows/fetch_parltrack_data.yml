@@ -39,7 +39,8 @@ jobs:
           jupyter nbconvert --to notebook --execute fetch_parltrack_data.ipynb --output executed_notebook.ipynb
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
-
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+          
       # Step 6: Upload the Executed Notebook as an Artifact
       - name: Upload Executed Notebook
         uses: actions/upload-artifact@v3
