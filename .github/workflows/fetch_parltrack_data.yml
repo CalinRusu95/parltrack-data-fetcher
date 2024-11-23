@@ -3,7 +3,7 @@ name: Execute Notebook and Upload to Google Drive
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 10 * * *'  # Runs daily at midnight UTC
+    - cron: '0 10 * * *'  # Runs daily at midnight EET
 
 jobs:
   execute-notebook:
